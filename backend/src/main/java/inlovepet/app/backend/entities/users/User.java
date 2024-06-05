@@ -1,5 +1,6 @@
 package inlovepet.app.backend.entities.users;
 
+import inlovepet.app.backend.entities.users.petowner.Petowner;
 import inlovepet.app.backend.enums.roles.UserRoles;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -83,7 +84,12 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-            return List.of(new SimpleGrantedAuthority("ROLE_PETSHOP"), new SimpleGrantedAuthority("ROLE_PETOWNER"));
+        for(UserRoles i : this.roles) {
+            if(i == UserRoles.PETOWNER) {
+                return List.of(new SimpleGrantedAuthority("ROLE_PETOWNER"));
+            }
+        }
+        return List.of(new SimpleGrantedAuthority("ROLE_PETSHOP"));
     }
 
     @Override

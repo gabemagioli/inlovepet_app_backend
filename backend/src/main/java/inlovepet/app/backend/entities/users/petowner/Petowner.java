@@ -4,6 +4,7 @@ import inlovepet.app.backend.entities.users.User;
 import inlovepet.app.backend.enums.roles.UserRoles;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @DiscriminatorValue("Petowner")

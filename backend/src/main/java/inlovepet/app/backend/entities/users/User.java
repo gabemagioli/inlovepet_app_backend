@@ -2,15 +2,16 @@ package inlovepet.app.backend.entities.users;
 
 import inlovepet.app.backend.enums.roles.UserRoles;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
 @Entity
 @Table(name = "USERS")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class User {
+public class User implements UserDetails {
     //attributes
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -57,9 +58,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return this.password;
-    }
     public void setPassword(String password) {
         this.password = password;
     }
@@ -81,5 +79,20 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email, password);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+            return List.of(new SimpleGrantedAuthority("ROLE_PETSHOP"), new SimpleGrantedAuthority("ROLE_PETOWNER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 }

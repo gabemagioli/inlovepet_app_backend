@@ -82,6 +82,7 @@ public class User implements UserDetails {
         return Objects.hash(id, name, email, password);
     }
 
+    //UserDetails methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         for(UserRoles i : this.roles) {

@@ -2,7 +2,9 @@ package inlovepet.app.backend.useCases;
 
 import inlovepet.app.backend.dtos.LoginDTO;
 import inlovepet.app.backend.dtos.RegisterDTO;
+import inlovepet.app.backend.dtos.TokenDTO;
 import inlovepet.app.backend.entities.users.User;
+import inlovepet.app.backend.infra.security.TokenService;
 import inlovepet.app.backend.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,18 +17,25 @@ public class UserUseCases {
 
     private UserRepository userRepository;
     private AuthenticationManager authenticationManager;
+    private TokenService tokenService;
 
-    public UserUseCases(UserRepository rep, AuthenticationManager am) {
+    public UserUseCases(UserRepository rep, AuthenticationManager am,TokenService ts) {
         this.userRepository = rep;
         this.authenticationManager = am;
+        this.tokenService = ts;
     }
 
     public ResponseEntity login(LoginDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
 
         var auth = authenticationManager.authenticate(usernamePassword);
+        User user = (User) userRepository.findByEmail(data.email());
+        String token = null;
+        if(user != null) {
+            token = tokenService.generateToken((User) auth.getPrincipal());
+        }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new TokenDTO(token));
 
     }
 
@@ -39,6 +48,6 @@ public class UserUseCases {
         User newUser = new User(data.name(), data.email(), encryptedPassword, data.role());
         userRepository.save(newUser);
 
-        return ResponseEntity.ok().body(data);//later on the project stop returning the data after the login.
+        return ResponseEntity.ok().body(newUser);//later on the project stop returning the data after the login.
     }
 }

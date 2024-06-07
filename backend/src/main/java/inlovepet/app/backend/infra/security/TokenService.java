@@ -15,33 +15,30 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("${jwt.token.secret}")
+    @Value("${api.security.token.secret}")
     private String secret;
 
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("inlovepet_userToken")
                     .withSubject(user.getEmail())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
-            return token;
         } catch (JWTCreationException exception){
             throw new RuntimeException("Error while generating the JWT token", exception);
         }
     }
 
-    public String validateToken(String token) {
+    public String validateToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer("inlovepet_userToken")
                     .build()
-                    .verify(token)
-                    .getSubject();
-        }
-        catch(JWTVerificationException exception) {
+                    .verify(token).getSubject();
+        } catch (JWTVerificationException exception){
             return "";
         }
     }

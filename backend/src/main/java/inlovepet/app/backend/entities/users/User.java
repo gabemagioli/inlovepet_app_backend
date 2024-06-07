@@ -26,6 +26,8 @@ public class User implements UserDetails {
     @Column
     @Enumerated(EnumType.STRING)
     private Set<UserRoles> roles;
+    @Column
+    private Boolean isActive;
 
     //constructors
     public User(){}
@@ -38,6 +40,7 @@ public class User implements UserDetails {
             this.roles = new HashSet<>();
             this.roles.add(role);
         }
+        this.isActive = true;
     }
 
     //getters and setters
@@ -68,6 +71,13 @@ public class User implements UserDetails {
     }
     public void setRole(UserRoles role) {
         this.roles.add(role);
+    }
+
+    public Boolean getIsActive() {
+        return this.isActive;
+    }
+    public void setIsActive(Boolean newUserStatus) {
+        this.isActive = newUserStatus;
     }
 
     //equals and hashcode
